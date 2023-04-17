@@ -6,4 +6,8 @@ class Chef < ApplicationRecord
   def unique_ingredients
     ingredients.distinct
   end
+
+  def ingredients_names
+    ingredients.distinct.pluck(:name).to_sentence
+  end
 end

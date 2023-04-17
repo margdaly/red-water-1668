@@ -28,5 +28,11 @@ RSpec.describe Chef, type: :model do
         expect(@chef2.unique_ingredients).to eq([@flour, @sugar, @butter])
       end
     end
+
+    describe 'ingredients_names' do
+      it 'returns the names of the ingredients only once' do
+        expect(@chef2.ingredients_names).to eq("Butter, Flour, and Sugar")
+      end
+    end
   end
 end
