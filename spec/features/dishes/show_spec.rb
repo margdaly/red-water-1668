@@ -9,8 +9,10 @@ RSpec.describe "Dish Show Page" do
       @donut = @chef2.dishes.create!(name: "Donut", description: "The Best")
       @lettuce = Ingredient.create!(name: "Lettuce", calories: 100)
       @croutons = Ingredient.create!(name: "Croutons", calories: 200)
+      @carrots = Ingredient.create!(name: "Carrots", calories: 150)
       @flour = Ingredient.create!(name: "Flour", calories: 800)
       @sugar = Ingredient.create!(name: "Sugar", calories: 900)
+      @butter = Ingredient.create!(name: "Butter", calories: 700)
       DishIngredient.create!(dish: @salad, ingredient: @lettuce)
       DishIngredient.create!(dish: @salad, ingredient: @croutons)
       DishIngredient.create!(dish: @donut, ingredient: @flour)
@@ -66,12 +68,59 @@ RSpec.describe "Dish Show Page" do
       
     it "And I see the chef's name" do
       visit dish_path(@donut)
-      save_and_open_page
+
       expect(page).to have_content("Dish By: Chef2")
       expect(page).to_not have_content("Dish By: Chef1")
       visit dish_path(@salad)
+
       expect(page).to have_content("Dish By: Chef1")
       expect(page).to_not have_content("Dish By: Chef2")
+    end
+
+    describe 'I see a form' do 
+      xit "has form to add an ingredient to this Dish" do
+        visit dish_path(@donut)
+        within "#add-ingredient" do
+          expect(page).to have_field(:ingredient_id)
+          expect(page).to have_field("Sumbit")
+          expect(page).to have_content("Add Ingredient to Donut")
+        end
+
+        visit dish_path(@salad)
+        within "#add-ingredient" do
+          expect(page).to have_field(:ingredient_id)
+          expect(page).to have_field("Sumbit")
+          expect(page).to have_content("Add Ingredient to Salad")
+        end
+      end
+
+      it "When I fill in the form with the ID of an Ingredient, 
+          and click Submit, I am redirected to that dish's show page,
+          And I see that ingredient is now listed." do
+        visit dish_path(@donut)
+        expect(page).to_not have_content(@butter.name)
+
+        fill_in :ingredient_id, with: @butter.id
+        click_on("Submit")
+
+        expect(current_path).to eq(dish_path(@donut))
+        within "#ingredients-#{@butter.id}" do
+          expect(page).to have_content(@butter.name)
+        end
+        expect(page).to have_content("Donut's Total Calories: 2400")
+
+        visit dish_path(@salad)
+        expect(page).to_not have_content(@carrots.name)
+
+        fill_in :ingredient_id, with: @carrots.id
+        click_on("Submit")
+
+        expect(current_path).to eq(dish_path(@salad))
+        within "#ingredients-#{@carrots.id}" do
+          expect(page).to have_content(@carrots.name)
+        end
+        expect(page).to have_content("Salad's Total Calories: 450")
+      end
     end
   end
 end

@@ -13,3 +13,14 @@
   <% end %>
 </ul>
 <li><%= @dish.name %>'s Total Calories: <%= @dish.total_calories %></li>
+<br>
+<br>
+<section id="add-ingredient">
+<%= form_with model: @dish_ingredient, local: true do |form| %>
+  <%= form.hidden_field :dish_id, value: @dish.id %>
+  <%= form.label "Add Ingredient to #{@dish.name}" %>
+  <%= form.text_field :ingredient_id %>
+  <%= form.submit "Submit"%>
+
+<% end %>
+</section>
